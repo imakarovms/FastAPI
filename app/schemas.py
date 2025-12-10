@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict
 from decimal import Decimal
+from typing import Optional
 
 class CategoryCreate(BaseModel):
     """
@@ -8,9 +9,9 @@ class CategoryCreate(BaseModel):
     """
     name: str = Field(..., min_length=3, max_length=50, 
                       description="Название категории")
-    parent_id: int | None = Field(None, description="ID родительской категории если есть")
+    parent_id: Optional[int] = Field(default=None, description="ID родительской категории, если есть")
 
-class Category(BaseModel):
+class CategoryResponce(BaseModel):
     """
     Модель для ответа с данными категории.
     Используется в GET-запросах.
@@ -18,7 +19,7 @@ class Category(BaseModel):
     id: int 
     name: str = Field(..., min_length=3, max_length=50, 
                       description="Название категории")
-    parent_id: int | None = Field(None, description="ID родительской категории если есть")
+    parent_id: Optional[int] = Field(None, description="ID родительской категории, если есть")
     is_active: bool = Field(..., description="Активность категории")
     model_config = ConfigDict(from_attributes=True)
 
@@ -36,7 +37,7 @@ class ProductCreate(BaseModel):
     stock: int = Field(..., ge=0, description="Количество товара на складе (0 или больше)")
     category_id: int = Field(..., description="ID категории, к которой относится товар")
 
-class Product(BaseModel):
+class ProductResponce(BaseModel):
     """
     Модель для ответа с данными товара.
     Используется в GET-запросах.

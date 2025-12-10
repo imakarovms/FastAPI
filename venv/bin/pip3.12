@@ -1,4 +1,4 @@
-#!/home/maks/OOP/venv/bin/python3
+#!/home/ubuntu/fastapi/FastAPI/venv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
