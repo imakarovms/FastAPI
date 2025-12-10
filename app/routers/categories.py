@@ -6,39 +6,53 @@ from app.models.categories import Category
 from app.schemas import CategoryCreate, CategoryResponce
 from app.db_depends import get_db
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.db_depends import get_async_db
+
 router = APIRouter(prefix="/categories",
                    tags=["categories"],
                    )
 
 @router.get('/', response_model=list[CategoryResponce], status_code=status.HTTP_200_OK)
-async def get_all_categories(db:Session = Depends(get_db)):
+async def get_all_categories(db: AsyncSession = Depends(get_async_db)):
     """
-    Get all categories
+    Get all active categories
     """
     stmt = select(Category).where(Category.is_active == True)
-    categories = db.scalars(stmt).all()
+    result = await db.scalars(stmt)
+    categories = result.all()
     return categories
-    
 
 @router.post("/", response_model=CategoryResponce, status_code=status.HTTP_201_CREATED)
-async def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
+async def create_category(category: CategoryCreate, db: AsyncSession = Depends(get_async_db)):
     """
-    Создать новую категорию
+    Create a new category
     """
-    #Проверяем есть ли родительская категория, если указан
+    # Проверка существования родительской категории, если указан parent_id
     if category.parent_id is not None:
-        stmt = select(Category).where(Category.id == category.parent_id,
-                                           Category.is_active == True)
-        parent = db.scalars(stmt).first()
-
+        stmt = select(Category).where(
+            Category.id == category.parent_id,
+            Category.is_active == True
+        )
+        result = await db.scalars(stmt)
+        parent = result.first()
         if parent is None:
-            raise HTTPException(status_code=400, detail="Parent category not found")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Parent category with id {category.parent_id} not found"
+            )
     
     # Создание новой категории
-    db_category = Category(**category.model_dump())
+    db_category = Category(
+        name=category.name,
+        parent_id=category.parent_id,
+        is_active=True  # Убедитесь, что по умолчанию активна
+    )
+    
     db.add(db_category)
-    db.commit()
-    db.refresh(db_category)
+    await db.commit()
+    await db.refresh(db_category)  # Обязательно для получения сгенерированного id
     return db_category
 
 @router.put("/{category_id}", response_model=CategoryCreate, status_code=status.HTTP_200_OK)
