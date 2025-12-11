@@ -1,1 +1,1 @@
-pip install fastapi uvicorn alembic asyncpg
+pip install fastapi uvicorn alembic asyncpg passlib "bcrypt==4.0.1" pydantic[email]

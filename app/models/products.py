@@ -23,8 +23,8 @@ class Product(Base):
     category: Mapped["Category"] = relationship(
         back_populates= 'products'
     )
-
-
+    seller = relationship("User", back_populates="products")  
+    seller_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
 
 
