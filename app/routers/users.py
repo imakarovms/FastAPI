@@ -35,7 +35,7 @@ async def create_product(user: UserCreate, db: AsyncSession = Depends(get_async_
     result = await db.scalars(select(User).where(User.email == user.email))
     if result.first():
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                            detail="Email already registered")
+                            detail="User with this email exists")
 
     # Создание объекта пользователя с хешированным паролем
     db_user = User(
