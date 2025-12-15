@@ -87,13 +87,16 @@ async def update_category(category_id: int, category: CategoryCreate, db: AsyncS
     return db_category
 
 @router.delete("/{category_id}", status_code=status.HTTP_200_OK)
-async def delete_category(category_id: int, db: Session = Depends(get_db)):
+async def delete_category(category_id: int, db: AsyncSession = Depends(get_async_db)):
     """
     Удаляем категорию
     """
-    stmt = await db.scalars(select(Category).where(Category.id == category_id, Category.is_active == True))
-    category = stmt.first()
-    if category is None:
+    stmt = select(Category).where(Category.id == category_id,
+                                       Category.is_active == True)
+    result = await db.scalars(stmt)
+    db_category = result.first()
+    
+    if db_category is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Category not found")
 
     await db.execute(update(Category).where(Category.id == category_id).values(is_active=False))
