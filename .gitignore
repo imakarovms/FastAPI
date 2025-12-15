@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+.venv*/
+
+# Виртуальное окружение
+venv/
+.venv/
+virtualenv/
+.virtualenv/
+pyvenv.cfg
+pip-selfcheck.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Секреты и конфиги
+.env
+.env.local
+.env.*.local
+.env.development
+.env.staging
+.env.production
+config/local_settings.py
+secrets.yaml
+secrets.json
+*.pem
+*.key
+*.crt
+*.pfx
+
+# База данных
+*.db
+*.sqlite3
+*.sqlite
+pgdata/
+
+# Docker
+.dockerenv
+docker-compose.override.yml
+
+# Тесты
+.coverage
+.tox/
+htmlcov/
+.pytest_cache/
+.hypothesis/
+
+# Логи
+logs/
+*.log
+
+# Асинхронные фреймворки
+*.uvicorn
+*.uvicorn.*
+*.gunicorn
+*.gunicorn.*
+
+# Сборка
+dist/
+build/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter
+.ipynb_checkpoints
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# pytest
+pytest.ini
