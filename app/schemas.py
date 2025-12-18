@@ -2,6 +2,11 @@ from pydantic import BaseModel, Field, ConfigDict, EmailStr
 from decimal import Decimal
 from typing import Optional
 from app.models import Product
+from datetime import datetime
+from typing import Annotated
+from pydantic import Field
+from fastapi import Form
+
 class CategoryCreate(BaseModel):
     """
     Модель для создания и обновления категории.
@@ -28,14 +33,49 @@ class ProductCreate(BaseModel):
     Модель для создания и обновления товара.
     Используется в POST и PUT запросах.
     """
-    name: str = Field(..., min_length=3, max_length=50, 
-                      description="Название продукта")
-    description: str | None = Field(None, max_length=500,
-                                       description="Описание товара (до 500 символов)")
-    price: Decimal = Field(..., gt=0, description="Цена товара (больше 0)", decimal_places=2)
-    image_url: str | None = Field(None, max_length=200, description="URL изображения товара")
-    stock: int = Field(..., ge=0, description="Количество товара на складе (0 или больше)")
-    category_id: int = Field(..., description="ID категории, к которой относится товар")
+    name: str = Field(
+        ...,
+        min_length=3,
+        max_length=100,
+        description="Название товара (3-100 символов)"
+    )
+    description: Optional[str] = Field(
+        None,
+        max_length=500,
+        description="Описание товара (до 500 символов)"
+    )
+    price: Decimal = Field(gt=0, description="Цена товара (больше 0)", decimal_places=2)
+    stock: int = Field(
+        ...,
+        ge=0,
+        description="Количество товара на складе (0 или больше)"
+    )
+    category_id: int = Field(
+        ...,
+        description="ID категории, к которой относится товар"
+    )
+    
+    @classmethod
+    def as_form(
+        cls,
+        name: Annotated[str, Form(min_length=3, max_length=100, description="Название товара")],
+        price: Annotated[float, Form(gt=0, description="Цена товара")],  # Используем float для формы
+        stock: Annotated[int, Form(ge=0, description="Количество на складе")],
+        category_id: Annotated[int, Form(description="ID категории")],
+        description: Annotated[Optional[str], Form(max_length=500)] = None,
+    ) -> "ProductCreate":
+        """
+        Создает экземпляр модели из данных формы.
+        Необходим для обработки multipart/form-data запросов в FastAPI.
+        """
+        # Конвертируем float в Decimal для соответствия модели
+        return cls(
+            name=name,
+            description=description,
+            price=Decimal(str(price)).quantize(Decimal('0.01')),
+            stock=stock,
+            category_id=category_id,
+        )
 
 class ProductResponce(BaseModel):
     """
@@ -109,3 +149,32 @@ class Cart(BaseModel):
     total_price: Decimal = Field(..., ge=0, description="Общая стоимость товаров")
 
     model_config = ConfigDict(from_attributes=True)
+
+class OrderItem(BaseModel):
+    id: int = Field(..., description="ID позиции заказа")
+    product_id: int = Field(..., description="ID товара")
+    quantity: int = Field(..., ge=1, description="Количество")
+    unit_price: Decimal = Field(..., ge=0, description="Цена за единицу на момент покупки")
+    total_price: Decimal = Field(..., ge=0, description="Сумма по позиции")
+    product: ProductResponce | None = Field(None, description="Полная информация о товаре")
+
+    model_config = ConfigDict(from_attributes=True)
+
+class Order(BaseModel):
+    id: int = Field(..., description="ID заказа")
+    user_id: int = Field(..., description="ID пользователя")
+    status: str = Field(..., description="Текущий статус заказа")
+    total_amount: Decimal = Field(..., ge=0, description="Общая стоимость")
+    created_at: datetime = Field(..., description="Когда заказ был создан")
+    updated_at: datetime = Field(..., description="Когда последний раз обновлялся")
+    items: list[OrderItem] = Field(default_factory=list, description="Список позиций")
+
+    model_config = ConfigDict(from_attributes=True)    
+
+class OrderList(BaseModel):
+    items: list[Order] = Field(..., description="Заказы на текущей странице")
+    total: int = Field(ge=0, description="Общее количество заказов")
+    page: int = Field(ge=1, description="Текущая страница")
+    page_size: int = Field(ge=1, description="Размер страницы")
+
+    model_config = ConfigDict(from_attributes=True)    
