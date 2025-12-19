@@ -175,25 +175,31 @@ async def create_product(
     await db.refresh(db_product)
     return db_product
 
-@router.get('/category/{category_id}', response_model=list[ProductResponce], status_code=status.HTTP_200_OK)
+@router.get('/categories/{category_id}', response_model=list[ProductResponce], status_code=status.HTTP_200_OK)
 async def get_products_by_category(category_id: int, db: AsyncSession = Depends(get_async_db)):
     """
     Возвращает список товаров в указанной категории по её ID.
     """
-    # Проверяет, существует ли категория с указанным category_id.
-    # Если нет, возвращает ошибку HTTP 404 ("Category not found").
-    category_stmt = await db.scalars(select(Category).where(Category.id == category_id,
-                                      Category.is_active == True))
-    db_category = category_stmt.first()
+    # Проверяем существование активной категории
+    category_stmt = select(Category).where(
+        Category.id == category_id,
+        Category.is_active == True
+    )
+    category_result = await db.execute(category_stmt)
+    db_category = category_result.scalars().first()
 
     if db_category is None:
         raise HTTPException(status_code=404, detail="Category not found")
     
-    #Возвращает список всех активных товаров (is_active=True) в указанной категории в формате list[Product].
-    product_stmt = await db.scalars(select(Product).where(Product.is_active == True,
-                                         Product.category_id == category_id))
-    produts = product_stmt.all()
-    return produts
+    # Получаем активные товары в категории
+    product_stmt = select(Product).where(
+        Product.is_active == True,
+        Product.category_id == category_id
+    )
+    product_result = await db.execute(product_stmt)
+    products = product_result.scalars().all()
+    
+    return products
 
 
 

@@ -17,14 +17,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(categories.router, prefix="/categories")
-app.mount("/media", StaticFiles(directory="media"), name="media")
 
 app.include_router(categories.router)
 app.include_router(products.router)
 app.include_router(users.router)
 app.include_router(cart.router)
 app.include_router(orders.router)
+app.mount("/media", StaticFiles(directory="media"), name="media")
 
 @app.get("/")
 async def root():
