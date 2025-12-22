@@ -22,6 +22,8 @@ services:
     volumes:
       - ./backend:/app  
       - ./media:/app/app/media  
+    env_file:
+      - .env     
     environment:
       DATABASE_URL: postgresql+asyncpg://ecommerce_user:ecommerce@postgres:5432/ecommerce_db
     depends_on:

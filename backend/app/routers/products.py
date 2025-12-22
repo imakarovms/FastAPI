@@ -201,8 +201,6 @@ async def get_products_by_category(category_id: int, db: AsyncSession = Depends(
     
     return products
 
-
-
 @router.get("/{product_id}", response_model=ProductResponce)
 async def get_product(product_id: int, db: AsyncSession = Depends(get_async_db)):
     """

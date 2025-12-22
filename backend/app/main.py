@@ -2,10 +2,14 @@ from fastapi import FastAPI
 from app.routers import categories, products, users, cart, orders
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
+
 
 app = FastAPI(title="Ecommerce FastAPI",
               version="0.1.0")
 
+load_dotenv() 
 
 app.add_middleware(
     CORSMiddleware,
