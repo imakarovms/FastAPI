@@ -1,16 +1,29 @@
+<!-- HomeView.vue -->
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import CategoryTree from './CategoryTree.vue'
 
-const categories = ref([])
+const categoriesTree = ref([])
 
 onMounted(async () => {
   const res = await fetch('/api/categories/')
-  categories.value = await res.json()
+  const flat = await res.json()
+  categoriesTree.value = buildCategoryTree(flat)
 })
+
+function buildCategoryTree(categories, parentId = null) {
+  return categories
+    .filter(cat => cat.parent_id === parentId)
+    .map(cat => ({
+      ...cat,
+      children: buildCategoryTree(categories, cat.id)
+    }))
+}
 </script>
 
 <template>
-  <div v-for="cat in categories" :key="cat.id">
-    {{ cat.name }}
+  <div>
+    <h2>Категории</h2>
+    <CategoryTree :categories="categoriesTree" />
   </div>
 </template>

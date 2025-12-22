@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <h1>Мой Vue-фронтенд</h1>
+      <h1>Магазин</h1>
     </header>
     <main>
       <HomeView />
