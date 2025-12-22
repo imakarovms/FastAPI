@@ -13,7 +13,7 @@ from app.models.users import User as UserModel
 from app.schemas import Order as OrderSchema, OrderList
 
 router = APIRouter(
-    prefix="/orders",
+    prefix="/api/orders",
     tags=["orders"],
 )
 

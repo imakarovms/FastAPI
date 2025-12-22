@@ -5,16 +5,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Ecommerce FastAPI",
               version="0.1.0")
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "database": "connected"}
+
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",  # Vite dev server
-        "http://localhost:8080",  # Vue CLI dev server
-    "http://localhost:80",    # Nginx
+        "http://localhost:5173",  # Vite dev-server
+        "http://frontend:5173",   # Для Docker-сети
+        "http://localhost:80",    # Nginx
         "http://nginx",           # Для Docker-сети
     ],
     allow_credentials=True,
@@ -32,13 +30,16 @@ app.include_router(orders.router)
 # Монтируем медиа-файлы
 app.mount("/media", StaticFiles(directory="media"), name="media")
 
-@app.get("/")
+@app.get("/api/")
 async def root():
     """
     Корневой маршрут, АПИ работает
     """
     return {"message": "Добро пожаловать в API интернет-магазина!"}
 
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok", "database": "connected"}
 
 
 

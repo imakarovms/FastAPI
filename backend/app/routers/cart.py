@@ -16,7 +16,7 @@ from app.schemas import (
     CartItemUpdate,
 )
 
-router = APIRouter(prefix="/cart", tags=["cart"])
+router = APIRouter(prefix="/api/cart", tags=["cart"])
 
 async def _ensure_product_available(db: AsyncSession, product_id: int) -> None:
     result = await db.scalars(

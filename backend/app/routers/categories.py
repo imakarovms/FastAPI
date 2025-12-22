@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db_depends import get_async_db
 
-router = APIRouter(prefix="/categories",
+router = APIRouter(prefix="/api/categories",
                    tags=["categories"],
                    )
 

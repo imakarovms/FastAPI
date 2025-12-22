@@ -14,7 +14,7 @@ from typing import Optional
 from app.db_depends import get_async_db
 
 
-router = APIRouter(prefix="/products",
+router = APIRouter(prefix="/api/products",
                    tags=["products"],
                    )
 

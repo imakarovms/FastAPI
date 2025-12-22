@@ -1,11 +1,23 @@
-<script setup></script>
-
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <div id="app">
+    <header>
+      <h1>Мой Vue-фронтенд</h1>
+    </header>
+    <main>
+      <HomeView />
+    </main>
+  </div>
 </template>
 
-<style scoped></style>
+<script setup>
+import HomeView from './views/HomeView.vue'
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+</style>

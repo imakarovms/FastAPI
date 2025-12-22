@@ -1,21 +1,14 @@
-# frontend/Dockerfile
-# STAGE 1: Разработка (с hot-reload)
+# Этап разработки
 FROM node:20-alpine AS development
 
 WORKDIR /app
 
-# Установка curl для health-check
-RUN apk add --no-cache curl  # ← КРИТИЧЕСКИ ВАЖНО
-
 # Копируем package.json и устанавливаем зависимости
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Копируем исходный код
 COPY . .
 
-# Открываем порт Vite
-EXPOSE 5173
-
-# Запускаем dev-сервер с host=0.0.0.0
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Запускаем dev-сервер Vite
+CMD ["npm", "run", "dev"]
