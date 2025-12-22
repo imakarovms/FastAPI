@@ -1,5 +1,15 @@
-.venv
-__pycache__
-.idea
-*/Dockerfile*
-.dockerignore
+# .dockerignore
+**/__pycache__
+**/.pytest_cache
+**/.git
+**/.idea
+**/.vscode
+venv
+.env
+*.log
+*.sqlite3
+*.pyc
+node_modules
+dist
+build
+.DS_Store

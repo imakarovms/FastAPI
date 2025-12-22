@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.categories import Category 
 from app.schemas import CategoryCreate, CategoryResponce
-from app.db_depends import get_db
+
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
