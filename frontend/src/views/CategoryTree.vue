@@ -1,7 +1,10 @@
+<!-- src/views/CategoryTree.vue -->
 <script setup>
 const props = defineProps({
-  categories: { type: Array, required: true }
+  categories: { type: Array, required: true },
+  activeCategory: { type: Number, default: null }
 })
+
 const emit = defineEmits(['select'])
 
 function handleClick(id) {
@@ -11,24 +14,31 @@ function handleClick(id) {
 
 <template>
   <ul class="category-tree">
-    <li v-for="cat in categories" :key="cat.id">
-      <span @click="handleClick(cat.id)" class="category-link">{{ cat.name }}</span>
-      <CategoryTree
-        v-if="cat.children?.length"
-        :categories="cat.children"
-        @select="emit('select', $event)"
-      />
+    <li v-for="cat in categories" :key="cat.id" class="category-item">
+      <div 
+        class="category-main" 
+        :class="{ active: activeCategory === cat.id }"
+        @click="handleClick(cat.id)"
+      >
+        <span class="category-icon">
+          {{ cat.children?.length ? '📁' : '📄' }}
+        </span>
+        <span class="category-name">{{ cat.name }}</span>
+        <span v-if="cat.children?.length" class="category-count">
+          {{ cat.children.length }}
+        </span>
+      </div>
+      <div v-if="cat.children?.length" class="category-children-wrapper">
+        <CategoryTree
+          :categories="cat.children"
+          :active-category="activeCategory"
+          @select="emit('select', $event)"
+        />
+      </div>
     </li>
   </ul>
 </template>
 
 <style scoped>
-.category-link {
-  cursor: pointer;
-  color: #1976d2;
-  text-decoration: underline;
-}
-.category-link:hover {
-  opacity: 0.8;
-}
+@import '@/assets/styles/category-tree.css';
 </style>

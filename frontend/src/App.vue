@@ -1,16 +1,14 @@
+<!-- /home/ubuntu/fastapi/FastAPI/frontend/src/App.vue -->
 <template>
   <div id="app">
-    <header>
-      <h1>Магазин</h1>
-    </header>
     <main>
-      <HomeView />
+      <router-view />
     </main>
   </div>
 </template>
 
 <script setup>
-import HomeView from './views/HomeView.vue'
+// Ничего не импортируем — маршрутизация управляет отображением
 </script>
 
 <style>

@@ -117,13 +117,20 @@ async def update_cart_item(
     updated_item = await _get_cart_item(db, current_user.id, product_id)
     return updated_item
 
-@router.delete("/items/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/items/{item_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def remove_item_from_cart(
-    product_id: int,
+    item_id: int,
     db: AsyncSession = Depends(get_async_db),
     current_user: UserModel = Depends(get_current_user),
 ):
-    cart_item = await _get_cart_item(db, current_user.id, product_id)
+    result = await db.scalars(
+        select(CartItemModel)
+        .where(
+            CartItemModel.id == item_id,
+            CartItemModel.user_id == current_user.id
+        )
+    )
+    cart_item = result.first()
     if not cart_item:
         raise HTTPException(status_code=404, detail="Cart item not found")
 

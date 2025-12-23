@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from app.schemas import UserCreate, UserResponce, RefreshTokenRequest
 from app.models.users import User 
 from fastapi.security import OAuth2PasswordRequestForm
-from app.auth import hash_password, verify_password, create_access_token, create_refresh_token
+from app.auth import hash_password, verify_password, create_access_token, create_refresh_token, get_current_user
 import jwt
 from app.config import SECRET_KEY, ALGORITHM
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -186,9 +186,9 @@ async def access_token(body: RefreshTokenRequest,
         "token_type": "bearer",
     }    
 
-
-
-
-
-
-
+@router.get("/me", response_model=UserResponce)
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    """
+    Возвращает данные текущего авторизованного пользователя.
+    """
+    return current_user
